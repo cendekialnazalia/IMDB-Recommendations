@@ -132,7 +132,7 @@ Data preparation ini memastikan semua fitur yang diperlukan tersedia dalam forma
 
 ## Model Development
 
-### Model Development dengan Content-Based Filtering
+### Content-Based Filtering
 **Cara Kerja:**  
 Content-Based Filtering memberikan rekomendasi film berdasarkan **kemiripan genre** antar film. Model menggunakan **TF-IDF vectorizer** pada kolom `genre_combined` untuk mengubah teks menjadi vektor, lalu menghitung **cosine similarity** antar film. Film yang memiliki nilai similarity tertinggi dianggap paling relevan.  
 
@@ -153,15 +153,12 @@ Content-Based Filtering memberikan rekomendasi film berdasarkan **kemiripan genr
 - Cosine similarity dihitung antar seluruh film  
 - Tidak memerlukan split data karena unsupervised  
 
-**Visualisasi / Insight:**  
-- Heatmap 10 film pertama menunjukkan tingkat kemiripan antar film berdasarkan genre  
-
 **Fungsi Rekomendasi:**  
 - `get_content_recommendations(title)` mengambil film paling mirip berdasarkan cosine similarity  
 
 ---
 
-### Model Development dengan Collaborative Filtering
+### Collaborative Filtering
 **Cara Kerja:**  
 Collaborative Filtering berbasis item menggunakan **pivot table user-movie ratings**. Model menghitung **cosine similarity antar film** berdasarkan rating pengguna. Film yang memiliki pola rating serupa dianggap paling mirip, sehingga direkomendasikan kepada pengguna yang menyukai film tertentu.
 
@@ -182,16 +179,13 @@ Collaborative Filtering berbasis item menggunakan **pivot table user-movie ratin
 - Menghitung cosine similarity antar film  
 - Model siap digunakan untuk mencari film serupa  
 
-**Visualisasi / Insight:**  
-- Heatmap 10 film pertama menunjukkan tingkat kemiripan antar film berdasarkan pola rating pengguna  
-
 **Fungsi Rekomendasi:**  
 - `get_item_based_recommendations(movie_title)` mengembalikan daftar film paling mirip berdasarkan item similarity  
 
 
 ---
 
-## Proses Training
+## Proses Training Nearest Neighbors
 
 **Cara Kerja:**  
 Nearest Neighbors memberikan rekomendasi film berdasarkan **jarak numerik** antar film pada fitur `Year` dan `Rating`. Film yang paling dekat secara numerik dianggap paling mirip dan direkomendasikan.
@@ -214,12 +208,44 @@ Nearest Neighbors memberikan rekomendasi film berdasarkan **jarak numerik** anta
 - Inisialisasi model `NearestNeighbors`  
 - Melatih model dengan `X_train` (`nn_model.fit(X_train)`)  
 
-**Visualisasi / Insight:**  
-- Plot distribusi rata-rata jarak neighbors untuk beberapa test samples  
-- Membantu memahami sebaran kemiripan antar film  
 
 **Fungsi Rekomendasi:**  
 - Menggunakan `nn_model.kneighbors(X_test)` untuk mendapatkan indeks film terdekat  
+
+---
+
+## EVALUASI MODEL
+
+### Metrik Evaluasi
+- **Cosine Similarity (Content-Based Filtering & Collaborative Filtering)**  
+  - Mengukur kemiripan antar film; nilai 1 = sangat mirip, 0 = tidak mirip.  
+  - Digunakan untuk menentukan film rekomendasi teratas.
+
+- **Jarak Neighbors (Nearest Neighbors)**  
+  - Mengukur jarak Euclidean antar fitur numerik (`Year` + `Rating`).  
+  - Rata-rata jarak digunakan untuk memeriksa sebaran kemiripan film.
+
+### Hasil Evaluasi
+- **Content-Based Filtering**  
+  - Film rekomendasi untuk `'The Shawshank Redemption'` memiliki similarity tinggi (>0.5) dengan genre mirip.  
+  - Heatmap 10 film pertama menunjukkan hubungan genre yang konsisten.
+
+- **Collaborative Filtering (Item-Item)**  
+  - Film rekomendasi untuk `'The Dark Knight'` memiliki pola rating pengguna yang mirip.  
+  - Heatmap similarity menunjukkan beberapa film memiliki rating mirip yang tinggi antar pengguna simulasi.
+
+- **Nearest Neighbors**  
+  - Rata-rata jarak neighbors pada test samples bervariasi, sebagian besar film memiliki jarak <0.3 (fitur normalisasi).  
+  - Plot distribusi jarak membantu memvisualisasikan sebaran kemiripan antar film secara numerik.
+
+### Kesimpulan Evaluasi
+- Content-Based Filtering efektif untuk genre multi-film dan rekomendasi film baru.  
+- Collaborative Filtering (Item-Item) menangkap pola preferensi pengguna kolektif meski menggunakan rating simulasi.  
+- Nearest Neighbors memberikan rekomendasi berbasis kemiripan numerik, memperkuat kualitas rekomendasi.  
+- Visualisasi similarity dan distribusi jarak neighbors membantu memahami dan memvalidasi hasil model.
+
+---
+
 
 ## KESIMPULAN
 ### Hasil Percobaan
