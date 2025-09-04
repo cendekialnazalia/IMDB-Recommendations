@@ -92,8 +92,8 @@ EDA ini membantu memahami karakteristik dataset dan menentukan strategi feature 
 Beberapa langkah EDA yang dilakukan meliputi:
 
 - **Univariate Exploratory Data Analysis - Deskripsi Variabel**  
-  df.info() -> Terdapat 250 data dengan 13 colums dan 3 colums tambahan genre yang sudah kita olah tadi.
-  df.describe() -> memahami distribusi awal data, mendeteksi outlier, dan mengetahui rentang nilai dari setiap variabel numerik.
+  data.info() -> Terdapat 250 data dengan 13 colums dan 3 colums tambahan genre yang sudah kita olah tadi.
+  data.describe() -> memahami distribusi awal data, mendeteksi outlier, dan mengetahui rentang nilai dari setiap variabel numerik.
   
 - **Exploratory Data Analysis - Rata-rata Ratings berdasarkan Genre**  
   Berdasarkan hasil EDA didapatkan hasil rata-rata rating tertinggi ditempati oleh genre adventure, wastern, action, adventure dan drama.
@@ -101,6 +101,12 @@ Beberapa langkah EDA yang dilakukan meliputi:
 - **Exploratory Data Analysis - 5 Film Teratas Berdasarkan Rating**  
   Dapat kita lihat the shawshank redemption menempati film teratas berdasarkan rating yaitu 9.3 dan ini juga memvalidasi EDA kita sebelumnya bahwa film drama ada genre dengan rating yang tinggi.
 
+  - **Exploratory Data Analysis - 5 Genre Teratas Berdasarkan Rating**  
+  Begitu pula setelah kita lihat 5 genre teratas kita bisa lihat crime dan drama pada posisi teratas
+
+- **Exploratory Data Analysis - 5 Casts Teratas Berdasarkan Rating**  
+  Data ini menunjukkan hasil Cast dengan rating tertinggi adalah Scott man, renee blaine, dan kawan-kawan. Ini bisa jadi menunjukkan ketertarikan untuk untuk film dengan cast serupa.
+  
 - **Exploratory Data Analysis - 5 Directors Teratas Berdasarkan Rating**  
   Data ini menunjukkan hasil Directors dengan rating tertinggi adalah Francis Ford Coppola. Ini bisa jadi menunjukkan ketertarikan untuk untuk film dengan directors serupa.
 
@@ -208,7 +214,16 @@ Tahap modeling bertujuan membangun sistem rekomendasi film yang dapat memberikan
      from sklearn.metrics.pairwise import cosine_similarity
      similarity_matrix = cosine_similarity(X_combined)
      ```
-  3. Untuk film input tertentu, ambil film dengan skor similarity tertinggi sebagai **Top-N Recommendation**.  
+  3. Untuk film input tertentu, ambil film dengan skor similarity tertinggi sebagai **Top-N Recommendation**. dan diapatkanlah hasil Sebagai berikut :
+
+| input_movie                                 | top_n_recommendations                                                                                     |
+|--------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| A Beautiful Mind                            | Rush, Ford v Ferrari, Hamilton, Green Book, C...                                                        |
+| The Lord of the Rings: The Return of the King | The Lord of the Rings: The Fellowship of the Ring, ..., ...                                             |
+| North by Northwest                          | Psycho, Rear Window, Spider-Man: No Way Home, ..., ...                                                  |
+| The Shining                                 | Capernaum, Whiplash, The Shawshank Redemption, ..., ...                                                 |
+| Up                                         | Inside Out, Monsters, Inc., Klaus, Coco, Spider-Man: ..., ...                                           |
+
 
 - **Kelebihan:**
   - Rekomendasi sangat personal karena berdasarkan konten film.  
@@ -219,55 +234,7 @@ Tahap modeling bertujuan membangun sistem rekomendasi film yang dapat memberikan
   - Tidak dapat memberikan rekomendasi novel yang sangat berbeda dari film sebelumnya (cold-start untuk konten baru tetap sulit).  
   - Terbatas pada fitur yang tersedia; kualitas rekomendasi tergantung pada akurasi representasi fitur.  
 
----
-
-## EVALUASI MODEL
-Tahap evaluasi bertujuan menilai kualitas sistem rekomendasi film berdasarkan **top-N recommendation** yang dihasilkan. Evaluasi dilakukan menggunakan beberapa metrik standar pada sistem rekomendasi berbasis content-based filtering.
-
-**1. Metrik Evaluasi**
-
-**1.1 Precision@K**
-- **Deskripsi:** Mengukur proporsi rekomendasi yang relevan dari top-K film yang direkomendasikan.  
-- **Formula:**  
-\[
-\text{Precision@K} = \frac{\text{Jumlah film relevan di top-K}}{K}
-\]  
-- **Interpretasi:** Nilai tinggi menunjukkan model sangat tepat dalam memilih item yang benar.
-
-**1.2 Recall@K**
-- **Deskripsi:** Mengukur proporsi film relevan yang berhasil direkomendasikan dari total film relevan yang ada.  
-- **Formula:**  
-\[
-\text{Recall@K} = \frac{\text{Jumlah film relevan di top-K}}{\text{Total film relevan}}
-\]  
-- **Interpretasi:** Nilai rendah menunjukkan model hanya menampilkan sebagian kecil dari semua item relevan.
-
-**1.3 NDCG@K (Normalized Discounted Cumulative Gain)**
-- **Deskripsi:** Mengukur kualitas ranking rekomendasi, memberi bobot lebih pada film relevan yang muncul di posisi atas.  
-- **Formula:**  
-\[
-DCG@K = \sum_{i=1}^{K} \frac{2^{rel_i} - 1}{\log_2(i + 1)}, \quad
-NDCG@K = \frac{DCG@K}{IDCG@K}
-\]  
-- **Interpretasi:** Nilai mendekati 1 menunjukkan urutan rekomendasi sangat optimal, film relevan ditempatkan di posisi teratas.
-
-**2. Hasil Evaluasi**
-
-| Metrik       | Skor   | Insight                                                                 |
-|--------------|--------|------------------------------------------------------------------------|
-| Precision@K  | ≈0.99  | Hampir semua item yang direkomendasikan relevan → model sangat presisi.|
-| Recall@K     | 0.05–0.18 | Hanya sebagian kecil dari item relevan yang ditampilkan → model kurang menjangkau semua item relevan.|
-| NDCG@K       | ≈0.996 | Item relevan ditempatkan di posisi teratas → ranking rekomendasi sudah optimal.|
-
-**Insight Keseluruhan:**  
-- Model sangat **presisi**, sehingga rekomendasi yang muncul hampir semuanya relevan.  
-- Recall rendah, artinya model belum mampu menjangkau semua item relevan.  
-- Ranking rekomendasi sangat baik, terbukti dari NDCG yang mendekati 1, sehingga film relevan muncul di urutan atas list rekomendasi.
-
-
----
-
-## DEMO
+**DEMO**
 Hal ini dilakukan untuk menjalankan *demo rekomendasi* dengan film `"The Godfather"`.  
 
 **Demo Recommendation: Sistem Rekomendasi Film**
@@ -318,7 +285,61 @@ print(demo.head(10))
    - Memberikan gambaran “seberapa dekat” film lain dengan film referensi.  
 
 
-## KESIMPULAN
+---
+
+## EVALUASI MODEL
+Tahap evaluasi bertujuan menilai kualitas sistem rekomendasi film berdasarkan **top-N recommendation** yang dihasilkan. Evaluasi dilakukan menggunakan beberapa metrik standar pada sistem rekomendasi berbasis content-based filtering.
+
+**1. Metrik Evaluasi**
+
+**1.1 Precision@K**
+- **Deskripsi:** Mengukur proporsi rekomendasi yang relevan dari top-K film yang direkomendasikan.  
+- **Formula:**  
+\[
+\text{Precision@K} = \frac{\text{Jumlah film relevan di top-K}}{K}
+\]  
+- **Interpretasi:** Nilai tinggi menunjukkan model sangat tepat dalam memilih item yang benar.
+
+**1.2 Recall@K**
+- **Deskripsi:** Mengukur proporsi film relevan yang berhasil direkomendasikan dari total film relevan yang ada.  
+- **Formula:**  
+\[
+\text{Recall@K} = \frac{\text{Jumlah film relevan di top-K}}{\text{Total film relevan}}
+\]  
+- **Interpretasi:** Nilai rendah menunjukkan model hanya menampilkan sebagian kecil dari semua item relevan.
+
+**1.3 NDCG@K (Normalized Discounted Cumulative Gain)**
+- **Deskripsi:** Mengukur kualitas ranking rekomendasi, memberi bobot lebih pada film relevan yang muncul di posisi atas.  
+- **Formula:**  
+\[
+DCG@K = \sum_{i=1}^{K} \frac{2^{rel_i} - 1}{\log_2(i + 1)}, \quad
+NDCG@K = \frac{DCG@K}{IDCG@K}
+\]  
+- **Interpretasi:** Nilai mendekati 1 menunjukkan urutan rekomendasi sangat optimal, film relevan ditempatkan di posisi teratas.
+
+**2. Evaluation Metrics**
+
+| Metric        | @5      | @10     | @20     |
+|---------------|---------|---------|---------|
+| Precision     | 0.9960  | 0.9880  | 0.9800  |
+| Recall        | 0.0480  | 0.0942  | 0.1852  |
+| NDCG          | 1.0000  | 0.9990  | 0.9975  |
+
+
+**3. Hasil Evaluasi**
+| Metrik       | Skor   | Insight                                                                 |
+|--------------|--------|------------------------------------------------------------------------|
+| Precision@K  | ≈0.99  | Hampir semua item yang direkomendasikan relevan → model sangat presisi.|
+| Recall@K     | 0.05–0.18 | Hanya sebagian kecil dari item relevan yang ditampilkan → model kurang menjangkau semua item relevan.|
+| NDCG@K       | ≈0.996 | Item relevan ditempatkan di posisi teratas → ranking rekomendasi sudah optimal.|
+
+**Insight Keseluruhan:**  
+- Model sangat **presisi**, sehingga rekomendasi yang muncul hampir semuanya relevan.  
+- Recall rendah, artinya model belum mampu menjangkau semua item relevan.  
+- Ranking rekomendasi sangat baik, terbukti dari NDCG yang mendekati 1, sehingga film relevan muncul di urutan atas list rekomendasi.
+
+
+### KESIMPULAN
 
 **Menjawab Problem Statements**
 - **Problem 1:** Sistem rekomendasi berbasis **Content-Based Filtering** berhasil menampilkan film yang sesuai preferensi pengguna berdasarkan genre, cast, dan sutradara.  
